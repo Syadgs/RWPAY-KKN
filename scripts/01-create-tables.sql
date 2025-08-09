@@ -9,6 +9,7 @@ CREATE TABLE residents (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     house_number VARCHAR(50) NOT NULL UNIQUE,
+    rt VARCHAR(10) NOT NULL,
     address TEXT,
     phone VARCHAR(20),
     email VARCHAR(255),
@@ -21,12 +22,17 @@ CREATE TABLE residents (
 CREATE TABLE payments (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     resident_id UUID REFERENCES residents(id) ON DELETE CASCADE,
+    payment_type VARCHAR(10) NOT NULL CHECK (payment_type IN ('LPS', 'PAB')),
     amount DECIMAL(15,2) NOT NULL,
     payment_date DATE NOT NULL,
     due_date DATE NOT NULL,
     status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'paid', 'overdue')),
     payment_method VARCHAR(50),
     notes TEXT,
+    cubic_meters DECIMAL(10,2),
+    rate_per_cubic DECIMAL(15,2),
+    invoice_number VARCHAR(100),
+    invoice_date DATE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -71,9 +77,11 @@ CREATE TABLE activity_logs (
 -- Create indexes for better performance
 CREATE INDEX idx_residents_house_number ON residents(house_number);
 CREATE INDEX idx_residents_status ON residents(status);
+CREATE INDEX idx_residents_rt ON residents(rt);
 CREATE INDEX idx_payments_resident_id ON payments(resident_id);
 CREATE INDEX idx_payments_payment_date ON payments(payment_date);
 CREATE INDEX idx_payments_status ON payments(status);
+CREATE INDEX idx_payments_payment_type ON payments(payment_type);
 CREATE INDEX idx_settings_key ON settings(key);
 CREATE INDEX idx_admin_users_email ON admin_users(email);
 CREATE INDEX idx_activity_logs_user_id ON activity_logs(user_id);

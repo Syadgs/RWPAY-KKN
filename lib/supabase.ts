@@ -32,6 +32,7 @@ export interface Resident {
   id: string
   name: string
   house_number: string
+  rt: string
   address?: string
   phone?: string
   email?: string
@@ -43,12 +44,19 @@ export interface Resident {
 export interface Payment {
   id: string
   resident_id: string
+  payment_type: "LPS" | "PAB"
   amount: number
   payment_date: string
   due_date: string
   status: "pending" | "paid" | "overdue"
   payment_method?: string
   notes?: string
+  // PAB specific fields
+  cubic_meters?: number
+  rate_per_cubic?: number
+  // Invoice fields
+  invoice_number?: string
+  invoice_date?: string
   created_at: string
   updated_at: string
   resident?: Resident
@@ -93,4 +101,20 @@ export interface DashboardStats {
   unpaid_this_month: number
   total_income_this_month: number
   target_monthly_income: number
+}
+
+export interface Invoice {
+  id: string
+  payment_id: string
+  invoice_number: string
+  invoice_date: string
+  resident_name: string
+  resident_address: string
+  payment_type: "LPS" | "PAB"
+  amount: number
+  cubic_meters?: number
+  rate_per_cubic?: number
+  status: "draft" | "sent" | "paid"
+  created_at: string
+  updated_at: string
 }
